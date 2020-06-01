@@ -1,0 +1,32 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.7</VERSION>
+ <DEVICE>"ATmega2560"</DEVICE>
+ <WORKING_DIR>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>D:/work\avr\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
+  <DIR>D:\work\avr\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR>D:\work\avr4\AvrAssembler2\Appnotes</DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>D:/work\avr\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m2560def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\Debug\AssemblerApplication1.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>AssemblerApplication1.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>AssemblerApplication1.map</FILE>
+  <FILE>AssemblerApplication1.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Reset><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>21</LINE></Reset>
+  <start><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>61</LINE></start>
+  <Algo1><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>77</LINE></Algo1>
+  <Algo2><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>104</LINE></Algo2>
+  <Delay><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>144</LINE></Delay>
+  <PDelay><FILE>D:\proteus\lab_arduino\lab-8\AssemblerApplication1\AssemblerApplication1\main.asm</FILE><LINE>148</LINE></PDelay>
+ </LABELS>
+</ASSEMBLER_INFO>
