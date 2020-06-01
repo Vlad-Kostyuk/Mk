@@ -1,27 +1,15 @@
-bool isAddress = false;
-bool isCommand = false;
-byte command;
-byte Address_A = 0x37;
-byte Address_B = 0x5A;
-byte Command_A = 0xA1;
-byte Command_B = 0xB1;
-bool isData1Come = false;
-byte Address;
-bool startAlgo1 = false;
-bool startAlgo2 = false;
+bool address = false;
+byte address_two;
+bool algoOne = false;
+bool algoTwo = false;
 byte Command;
-
-
-void setWriteModeRS485() {
-  byte port = PORTD;
-  PORTD |= 1 << PD1;
-  delay(1);
-}
-
-ISR(USART1_TX_vect)
-{
-  PORTD &= ~(1 << PD1);
-}
+bool comeData = false;
+byte address_one = 0x37;
+byte address_two = 0x5A;
+byte command_one = 0xA1;
+byte command_two = 0xB1;
+bool commands = false;
+byte command;
 
 void setup() {
   delay(100);
@@ -37,40 +25,46 @@ void setup() {
   UCSR1B |= (1 << UCSZ12) | (1 << TXCIE1);
 }
 
-void loop() {
 
+void RS485() {
+  byte port = PORTD;
+  PORTD |= 1 << PD1;
+  delay(1);
+}
+
+void loop() {
   if (Serial.available()) {
     int inByte = Serial.read();
     PORTA = inByte;
     if (inByte == 0xC1) {
-      startAlgo1 = true;
+      algoOne = true;
     } else if (inByte == 0xD1) {
-      startAlgo2 = true;
+      algoTwo = true;
     }
   }
 
-  if (startAlgo1) {
-    isAddress = true;
-    Address = Address_A;
-    Command = Command_A;
-    startAlgo1 = false;
-  } else if (startAlgo2) {
-    isAddress = true;
-    Address = Address_B;
-    Command = Command_B;
-    startAlgo2 = false;
+  if (algoOne) {
+    address = true;
+    address_two = address_one;
+    Command = command_one;
+    algoOne = false;
+  } else if (algoTwo) {
+    address = true;
+    address_two = address_two;
+    Command = command_two;
+    algoTwo = false;
   }
 
-  if (isAddress) {
-    setWriteModeRS485();
+  if (address) {
+    RS485();
     UCSR1B |= 1 << TXB81;
-    Serial1.write(Address);
-    isAddress = false;
-    isCommand = true;
-  } else if (isCommand) {
-    isAddress = false;
-    isCommand = false;
-    setWriteModeRS485();
+    Serial1.write(address_two);
+    address = false;
+    commands = true;
+  } else if (commands) {
+    address = false;
+    commands = false;
+    RS485();
     UCSR1B &= ~(1 << TXB81);
     Serial1.write(Command);
   }
@@ -81,4 +75,9 @@ void loop() {
     PORTB = inByte1;
     Serial.write(inByte1);
   }
+}
+
+ISR(USART1_TX_vect)
+{
+  PORTD &= ~(1 << PD1);
 }

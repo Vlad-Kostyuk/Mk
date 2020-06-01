@@ -6,20 +6,10 @@
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
-bool isAddress = true;
-byte Address = 0x37;
-bool isCommand = false;
+byte address = 0x37;
+bool command = false;
+bool addressOne = true;
 
-void setWriteModeRS485() {
-  PORTD |= 1 << PD2;
-  delay(1);
-}
-
-ISR(USART_TX_vect)
-{
-  PORTB = 0xF0;
-  PORTD &= ~(1 << PD2);
-}
 
 void setup() {
   delay(100);
@@ -36,38 +26,8 @@ void setup() {
   delay(1);
 }
 
-void loop() {
-  if (Serial.available()) {
-    int inByte = Serial.read();
-    if (isAddress) {
-      if (Address == inByte) {
-        isAddress = false;
-        isCommand = true;
-        UCSR0A &= ~(1 << MPCM0);
-      } 
-    } else if (isCommand) {
-      if (inByte == 0xA1) {
-        UCSR0A |= (1 << MPCM0);
-        sensors.requestTemperatures();
-        writeData(sensors.getTempCByIndex(0));
-      }
-    }
-  }
-}
-
-void writeData(byte value) {
-  setWriteModeRS485();
-  Serial.write(value);
-  setWriteModeRS485();
-  Serial.write(calculateCRC(value, 0x1D, 0xFF, 0x00));
-  setWriteModeRS485();
-  Serial.write(0b10100101);
-  isAddress = true;
-  isCommand = false;
-}
-
-byte calculateCRC(byte b, unsigned char poly, unsigned char crcStart,
-   unsigned char finalXOR) {
+byte crc(byte b, unsigned char poly, unsigned char crcStart,
+                  unsigned char finalXOR) {
   unsigned char crc = crcStart;
   unsigned char i;
 
@@ -88,4 +48,47 @@ unsigned char reflect8(unsigned char x) {
   x = (x & 0x33) << 2 | (x & 0xCC) >> 2;
   x = (x & 0x0F) << 4 | (x & 0xF0) >> 4;
   return x;
+}
+
+
+void loop() {
+  if (Serial.available()) {
+    int inByte = Serial.read();
+    if (addressOne) {
+      if (address == inByte) {
+        addressOne = false;
+        command = true;
+        UCSR0A &= ~(1 << MPCM0);
+      }
+    } else if (command) {
+      if (inByte == 0xA1) {
+        UCSR0A |= (1 << MPCM0);
+        sensors.requestTemperatures();
+        data(sensors.getTempCByIndex(0));
+      }
+    }
+  }
+}
+
+void data(byte value) {
+  RS485();
+  Serial.write(value);
+  RS485();
+  Serial.write(crc(value, 0x1D, 0xFF, 0x00));
+  RS485();
+  Serial.write(0b10100101);
+  addressOne = true;
+  command = false;
+}
+
+void RS485() {
+  PORTD |= 1 << PD2;
+  delay(1);
+}
+
+
+ISR(USART_TX_vect)
+{
+  PORTB = 0xF0;
+  PORTD &= ~(1 << PD2);
 }
